@@ -15,6 +15,7 @@ If you have any problems or questions, you can
 
     FCCeeGeneralOverview/FCCeeGeneralOverview.md
     FCCeeGuineaPigIRBackgrounds/README.md
+    FCCCaloDigitization/README.md
     Geometry/Geometry.md
     Visualization/Visualization.md
 
