@@ -1,0 +1,363 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>3.3. Tutorial: Developing Calorimeter Digitization in FCCSW &mdash; FCC Tutorials  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../_static/togglebutton.css?v=13237357" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/custom-admonitions.css?v=e6bfab01" />
+
+  
+    <link rel="shortcut icon" href="../../_static/favicon.ico"/>
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../_static/copybutton.js?v=f281be69"></script>
+      <script>let toggleHintShow = 'Click to show';</script>
+      <script>let toggleHintHide = 'Click to hide';</script>
+      <script>let toggleOpenOnPrint = 'true';</script>
+      <script src="../../_static/togglebutton.js?v=4a39c7ea"></script>
+      <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+      <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="3.4. Changing geometry" href="../Geometry/Geometry.html" />
+    <link rel="prev" title="3.2. Using Guinea-Pig to generate interaction region backgrounds" href="../FCCeeGuineaPigIRBackgrounds/README.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            FCC Tutorials
+              <img src="../../_static/fcc-logo-light.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../software-basics/README.html">1. First Steps</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../fast-sim-and-analysis/README.html">2. Generators, Fast Simulation and Analysis</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../README.html">3. Full Simulation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../FCCeeGeneralOverview/FCCeeGeneralOverview.html">3.1. FCC-ee Full Sim General Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../FCCeeGuineaPigIRBackgrounds/README.html">3.2. Using Guinea-Pig to generate interaction region backgrounds</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">3.3. Tutorial: Developing Calorimeter Digitization in FCCSW</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#background-what-is-digitization">3.3.1. Background: What is Digitization?</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#step-1-understand-the-fccsw-data-flow">3.3.2. Step 1: Understand the FCCSW Data Flow</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#typical-pipeline-for-a-calorimeter">3.3.2.1. Typical pipeline for a calorimeter:</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#step-2-create-a-new-digitizer-algorithm">3.3.3. Step 2: Create a New Digitizer Algorithm</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#file-src-mycalorimeterdigitizer-cpp">3.3.3.1. File: <code class="docutils literal notranslate"><span class="pre">src/MyCalorimeterDigitizer.cpp</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#step-3-register-the-algorithm">3.3.4. Step 3: Register the Algorithm</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#step-4-configure-your-digitizer-in-python">3.3.5. Step 4: Configure Your Digitizer in Python</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#step-5-validate-output">3.3.6. Step 5: Validate Output</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#with-root">3.3.6.1. With ROOT:</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#with-python">3.3.6.2. With Python:</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#step-6-extend-it">3.3.7. Step 6: Extend It</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#optional-integrate-into-full-fccsw-chain">3.3.8. Optional: Integrate into Full FCCSW Chain</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#references">3.3.9. References</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../Geometry/Geometry.html">3.4. Changing geometry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../Visualization/Visualization.html">3.5. Visualization</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../distributed-computing/README.html">4. Distributed computing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../developing-fcc-software/README.html">5. Developing FCCSW</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">External links:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://fccsw.web.cern.ch/">FCC Software</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://fcc-ee-detector-full-sim.docs.cern.ch/">FCC-ee Detector Full Sim</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://hep-fcc.github.io/FCCAnalyses/">FCCAnalyses</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://hsf-training.github.io/analysis-essentials/">Analysis essentials</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://hep-fcc.github.io/glossary">FCC Software glossary</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">FCC Tutorials</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../README.html"><span class="section-number">3. </span>Full Simulation</a></li>
+      <li class="breadcrumb-item active"><span class="section-number">3.3. </span>Tutorial: Developing Calorimeter Digitization in FCCSW</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/HEP-FCC/fcc-tutorials/blob/main/full-detector-simulations/FCCCaloDigitization/README.md" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section class="tex2jax_ignore mathjax_ignore" id="tutorial-developing-calorimeter-digitization-in-fccsw">
+<h1><span class="section-number">3.3. </span>Tutorial: Developing Calorimeter Digitization in FCCSW<a class="headerlink" href="#tutorial-developing-calorimeter-digitization-in-fccsw" title="Link to this heading"></a></h1>
+<p>This guide explains how to:</p>
+<ol class="arabic simple">
+<li><p>Understand the simulation/digitization flow</p></li>
+<li><p>Write your own digitization algorithm</p></li>
+<li><p>Plug it into the FCCSW/Key4HEP stack</p></li>
+<li><p>Validate your output</p></li>
+</ol>
+<section id="background-what-is-digitization">
+<h2><span class="section-number">3.3.1. </span>Background: What is Digitization?<a class="headerlink" href="#background-what-is-digitization" title="Link to this heading"></a></h2>
+<p>In high-energy physics software, <em>digitization</em> is the step that turns <em>simulated energy deposits (SimHits)</em> from Geant4 into <em>realistic readout signals</em> (DigiHits), as they would appear from actual detector electronics.</p>
+</section>
+<section id="step-1-understand-the-fccsw-data-flow">
+<h2><span class="section-number">3.3.2. </span>Step 1: Understand the FCCSW Data Flow<a class="headerlink" href="#step-1-understand-the-fccsw-data-flow" title="Link to this heading"></a></h2>
+<section id="typical-pipeline-for-a-calorimeter">
+<h3><span class="section-number">3.3.2.1. </span>Typical pipeline for a calorimeter:<a class="headerlink" href="#typical-pipeline-for-a-calorimeter" title="Link to this heading"></a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Event Generation
+    ↓
+Geant4 Simulation (SimCalorimeterHits)
+    ↓
+Digitization (CalorimeterHits)
+    ↓
+Reconstruction (Clusters, PF Objects)
+    ↓
+Analysis
+</pre></div>
+</div>
+<p>Data formats are defined using <em>EDM4hep</em>, and Gaudi algorithms orchestrate the pipeline.</p>
+</section>
+</section>
+<section id="step-2-create-a-new-digitizer-algorithm">
+<h2><span class="section-number">3.3.3. </span>Step 2: Create a New Digitizer Algorithm<a class="headerlink" href="#step-2-create-a-new-digitizer-algorithm" title="Link to this heading"></a></h2>
+<p>You will now write a <em>C++ digitizer</em> that:</p>
+<ul class="simple">
+<li><p>Reads SimCalorimeterHitCollection</p></li>
+<li><p>Applies a calibration and threshold</p></li>
+<li><p>Outputs CalorimeterHitCollection</p></li>
+</ul>
+<section id="file-src-mycalorimeterdigitizer-cpp">
+<h3><span class="section-number">3.3.3.1. </span>File: <code class="docutils literal notranslate"><span class="pre">src/MyCalorimeterDigitizer.cpp</span></code><a class="headerlink" href="#file-src-mycalorimeterdigitizer-cpp" title="Link to this heading"></a></h3>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;GaudiAlg/GaudiAlgorithm.h&quot;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;DataObjects/SimCalorimeterHitCollection.h&quot;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;DataObjects/CalorimeterHitCollection.h&quot;</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">MyCalorimeterDigitizer</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">GaudiAlgorithm</span><span class="w"> </span><span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+<span class="w">  </span><span class="n">MyCalorimeterDigitizer</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="n">ISvcLocator</span><span class="o">*</span><span class="w"> </span><span class="n">svcLoc</span><span class="p">)</span>
+<span class="w">    </span><span class="o">:</span><span class="w"> </span><span class="n">GaudiAlgorithm</span><span class="p">(</span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="n">svcLoc</span><span class="p">)</span><span class="w"> </span><span class="p">{}</span>
+
+<span class="w">  </span><span class="n">StatusCode</span><span class="w"> </span><span class="n">initialize</span><span class="p">()</span><span class="w"> </span><span class="k">override</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">info</span><span class="p">()</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;Initializing MyCalorimeterDigitizer&quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">endmsg</span><span class="p">;</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">StatusCode</span><span class="o">::</span><span class="n">SUCCESS</span><span class="p">;</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="n">StatusCode</span><span class="w"> </span><span class="n">execute</span><span class="p">()</span><span class="w"> </span><span class="k">override</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="k">auto</span><span class="o">*</span><span class="w"> </span><span class="n">simHits</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">get</span><span class="o">&lt;</span><span class="n">edm4hep</span><span class="o">::</span><span class="n">SimCalorimeterHitCollection</span><span class="o">&gt;</span><span class="p">(</span><span class="n">m_input</span><span class="p">);</span>
+<span class="w">    </span><span class="k">auto</span><span class="o">*</span><span class="w"> </span><span class="n">digiHits</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">edm4hep</span><span class="o">::</span><span class="n">CalorimeterHitCollection</span><span class="p">();</span>
+
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="k">auto</span><span class="o">&amp;</span><span class="w"> </span><span class="n">sim</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="o">*</span><span class="n">simHits</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="kt">double</span><span class="w"> </span><span class="n">energy</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">sim</span><span class="p">.</span><span class="n">getEnergy</span><span class="p">()</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">m_calibration</span><span class="p">;</span>
+<span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">energy</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">m_threshold</span><span class="p">)</span><span class="w"> </span><span class="k">continue</span><span class="p">;</span>
+
+<span class="w">      </span><span class="n">edm4hep</span><span class="o">::</span><span class="n">CalorimeterHit</span><span class="w"> </span><span class="n">hit</span><span class="p">;</span>
+<span class="w">      </span><span class="n">hit</span><span class="p">.</span><span class="n">setCellID</span><span class="p">(</span><span class="n">sim</span><span class="p">.</span><span class="n">getCellID</span><span class="p">());</span>
+<span class="w">      </span><span class="n">hit</span><span class="p">.</span><span class="n">setEnergy</span><span class="p">(</span><span class="n">energy</span><span class="p">);</span>
+<span class="w">      </span><span class="n">hit</span><span class="p">.</span><span class="n">setTime</span><span class="p">(</span><span class="n">sim</span><span class="p">.</span><span class="n">getTime</span><span class="p">());</span><span class="w">  </span><span class="c1">// could apply time smearing</span>
+<span class="w">      </span><span class="n">digiHits</span><span class="o">-&gt;</span><span class="n">push_back</span><span class="p">(</span><span class="n">hit</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="n">put</span><span class="p">(</span><span class="n">digiHits</span><span class="p">,</span><span class="w"> </span><span class="n">m_output</span><span class="p">);</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">StatusCode</span><span class="o">::</span><span class="n">SUCCESS</span><span class="p">;</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="k">private</span><span class="o">:</span>
+<span class="w">  </span><span class="n">Gaudi</span><span class="o">::</span><span class="n">Property</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_input</span><span class="p">{</span><span class="k">this</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;input&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;ECalBarrelHits&quot;</span><span class="p">};</span>
+<span class="w">  </span><span class="n">Gaudi</span><span class="o">::</span><span class="n">Property</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_output</span><span class="p">{</span><span class="k">this</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;output&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;ECalBarrelDigiHits&quot;</span><span class="p">};</span>
+<span class="w">  </span><span class="n">Gaudi</span><span class="o">::</span><span class="n">Property</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_threshold</span><span class="p">{</span><span class="k">this</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;threshold&quot;</span><span class="p">,</span><span class="w"> </span><span class="mf">0.1</span><span class="p">};</span><span class="w">        </span><span class="c1">// GeV</span>
+<span class="w">  </span><span class="n">Gaudi</span><span class="o">::</span><span class="n">Property</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_calibration</span><span class="p">{</span><span class="k">this</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;calibration&quot;</span><span class="p">,</span><span class="w"> </span><span class="mf">1.0</span><span class="p">};</span><span class="w">    </span><span class="c1">// Scale factor</span>
+<span class="p">};</span>
+
+<span class="n">DECLARE_COMPONENT</span><span class="p">(</span><span class="n">MyCalorimeterDigitizer</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="step-3-register-the-algorithm">
+<h2><span class="section-number">3.3.4. </span>Step 3: Register the Algorithm<a class="headerlink" href="#step-3-register-the-algorithm" title="Link to this heading"></a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">CMakeLists.txt</span></code></p>
+<p>Add this to your digitizer module:</p>
+<div class="highlight-cmake notranslate"><div class="highlight"><pre><span></span><span class="nb">gaudi_add_module</span><span class="p">(</span><span class="s">MyDigitizers</span>
+<span class="w">  </span><span class="s">SOURCES</span><span class="w"> </span><span class="s">src/MyCalorimeterDigitizer.cpp</span>
+<span class="w">  </span><span class="s">LINK</span><span class="w"> </span><span class="s">GaudiAlgLib</span><span class="w"> </span><span class="s">EDM4hep::edm4hep</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>Then build:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>mkdir<span class="w"> </span>build<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nb">cd</span><span class="w"> </span>build
+cmake<span class="w"> </span>..<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>make<span class="w"> </span>install
+</pre></div>
+</div>
+</section>
+<section id="step-4-configure-your-digitizer-in-python">
+<h2><span class="section-number">3.3.5. </span>Step 4: Configure Your Digitizer in Python<a class="headerlink" href="#step-4-configure-your-digitizer-in-python" title="Link to this heading"></a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">python/digi_config.py</span></code></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">Gaudi.Configuration</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Configurables</span><span class="w"> </span><span class="kn">import</span> <span class="n">MyCalorimeterDigitizer</span><span class="p">,</span> <span class="n">PodioOutput</span>
+
+<span class="n">digitizer</span> <span class="o">=</span> <span class="n">MyCalorimeterDigitizer</span><span class="p">(</span><span class="s2">&quot;MyCaloDigi&quot;</span><span class="p">)</span>
+<span class="n">digitizer</span><span class="o">.</span><span class="n">input</span> <span class="o">=</span> <span class="s2">&quot;ECalBarrelHits&quot;</span>
+<span class="n">digitizer</span><span class="o">.</span><span class="n">output</span> <span class="o">=</span> <span class="s2">&quot;ECalBarrelDigiHits&quot;</span>
+<span class="n">digitizer</span><span class="o">.</span><span class="n">threshold</span> <span class="o">=</span> <span class="mf">0.05</span>
+<span class="n">digitizer</span><span class="o">.</span><span class="n">calibration</span> <span class="o">=</span> <span class="mf">1.2</span>
+
+<span class="n">out</span> <span class="o">=</span> <span class="n">PodioOutput</span><span class="p">(</span><span class="s2">&quot;out&quot;</span><span class="p">)</span>
+<span class="n">out</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="s2">&quot;digitized.root&quot;</span>
+<span class="n">out</span><span class="o">.</span><span class="n">outputCommands</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;keep *&quot;</span><span class="p">]</span>
+
+<span class="n">ApplicationMgr</span><span class="p">(</span>
+    <span class="n">EvtSel</span><span class="o">=</span><span class="s2">&quot;NONE&quot;</span><span class="p">,</span>
+    <span class="n">EvtMax</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+    <span class="n">TopAlg</span><span class="o">=</span><span class="p">[</span><span class="n">digitizer</span><span class="p">,</span> <span class="n">out</span><span class="p">],</span>
+    <span class="n">OutputLevel</span><span class="o">=</span><span class="n">INFO</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>Then run:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">gaudirun</span><span class="o">.</span><span class="n">py</span> <span class="n">python</span><span class="o">/</span><span class="n">digi_config</span><span class="o">.</span><span class="n">py</span>
+</pre></div>
+</div>
+</section>
+<section id="step-5-validate-output">
+<h2><span class="section-number">3.3.6. </span>Step 5: Validate Output<a class="headerlink" href="#step-5-validate-output" title="Link to this heading"></a></h2>
+<section id="with-root">
+<h3><span class="section-number">3.3.6.1. </span>With ROOT:<a class="headerlink" href="#with-root" title="Link to this heading"></a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>root<span class="w"> </span>digitized.root
+</pre></div>
+</div>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">Events</span><span class="o">-&gt;</span><span class="n">Scan</span><span class="p">(</span><span class="s">&quot;ECalBarrelDigiHits.energy&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="with-python">
+<h3><span class="section-number">3.3.6.2. </span>With Python:<a class="headerlink" href="#with-python" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">uproot</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">awkward</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ak</span>
+
+<span class="n">file</span> <span class="o">=</span> <span class="n">uproot</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">&quot;digitized.root&quot;</span><span class="p">)</span>
+<span class="n">tree</span> <span class="o">=</span> <span class="n">file</span><span class="p">[</span><span class="s2">&quot;events&quot;</span><span class="p">]</span>
+<span class="n">energies</span> <span class="o">=</span> <span class="n">tree</span><span class="p">[</span><span class="s2">&quot;ECalBarrelDigiHits.energy&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">array</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">ak</span><span class="o">.</span><span class="n">to_list</span><span class="p">(</span><span class="n">energies</span><span class="p">))</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="step-6-extend-it">
+<h2><span class="section-number">3.3.7. </span>Step 6: Extend It<a class="headerlink" href="#step-6-extend-it" title="Link to this heading"></a></h2>
+<p>You can expand your digitizer by:</p>
+<ul class="simple">
+<li><p>Adding Gaussian noise</p></li>
+<li><p>Simulating ADC quantization</p></li>
+<li><p>Applying time smearing</p></li>
+<li><p>Merging SimHits per cell</p></li>
+</ul>
+</section>
+<section id="optional-integrate-into-full-fccsw-chain">
+<h2><span class="section-number">3.3.8. </span>Optional: Integrate into Full FCCSW Chain<a class="headerlink" href="#optional-integrate-into-full-fccsw-chain" title="Link to this heading"></a></h2>
+<p>If you want to use this in an FCCSW pipeline:</p>
+<ul class="simple">
+<li><p>Replace <code class="docutils literal notranslate"><span class="pre">SimCalorimeterHitDigi</span></code> in FCCSW with your own</p></li>
+<li><p>Make sure <code class="docutils literal notranslate"><span class="pre">readoutName</span></code> matches the one used in the geometry XML</p></li>
+</ul>
+</section>
+<section id="references">
+<h2><span class="section-number">3.3.9. </span>References<a class="headerlink" href="#references" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p><a class="reference external" href="https://github.com/HEP-FCC/FCCSW">FCCSW GitHub</a></p></li>
+<li><p><a class="reference external" href="https://key4hep.github.io/key4hep-doc/">Key4HEP Docs</a></p></li>
+<li><p><a class="reference external" href="https://edm4hep.web.cern.ch/">EDM4hep</a></p></li>
+<li><p><a class="reference external" href="https://gaudi.web.cern.ch/gaudi/">Gaudi</a></p></li>
+</ul>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../FCCeeGuineaPigIRBackgrounds/README.html" class="btn btn-neutral float-left" title="3.2. Using Guinea-Pig to generate interaction region backgrounds" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../Geometry/Geometry.html" class="btn btn-neutral float-right" title="3.4. Changing geometry" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, CERN.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  
+<div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    <span class="fa fa-book"> Other Versions</span>
+    v: ianna/calo_digi_tutorial
+    <span class="fa fa-caret-down"></span>
+  </span>
+  <div class="rst-other-versions">
+    <dl>
+      <dt>Branches</dt>
+      <dd><a href="../../../../main/index.html">main</a></dd>
+      <dd><a href="../../../../ci-notebook-code-guard/index.html">ci-notebook-code-guard</a></dd>
+      <dd><a href="../../../../ci-tutorial-fragments/index.html">ci-tutorial-fragments</a></dd>
+      <dd><a href="../../../../codex/herwig-madgraph-ci/index.html">codex/herwig-madgraph-ci</a></dd>
+      <dd><a href="../../../../codex/kkmcee-ditau-ci/index.html">codex/kkmcee-ditau-ci</a></dd>
+      <dd><a href="../../../../codex/lhe-generator-ci/index.html">codex/lhe-generator-ci</a></dd>
+      <dd><a href="../../../../codex/whizard-ditau-ci/index.html">codex/whizard-ditau-ci</a></dd>
+      <dd><a href="README.html">ianna/calo_digi_tutorial</a></dd>
+    </dl>
+  </div>
+</div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
